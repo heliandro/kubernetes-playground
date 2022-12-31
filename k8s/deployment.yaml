@@ -1,27 +1,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-nodejs
+  name: hello-bff
   labels:
     tier: backend
+  annotations:
+    helios.com/owner: "Heliandro"
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       tier: backend
   template:
     metadata:
       labels:
-        app: hello-nodejs
+        app: hello-bff
         tier: backend
         environment: dev
     spec:
       containers:
-        - name: hello-nodejs
-          image: heliandro/hello-nodejs:v0.1.2
-          imagePullPolicy: Always
+        - name: hello-bff
+          image: heliandro/hello-bff:0.1.1
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
           env:
             - name: PORT
               value: "3001"
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 100m
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3001
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3001
+            initialDelaySeconds: 3
+            periodSeconds: 10

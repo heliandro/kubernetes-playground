@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: hello-nodejs
+    app: hello-bff
   ports:
     - protocol: TCP
       port: 80
